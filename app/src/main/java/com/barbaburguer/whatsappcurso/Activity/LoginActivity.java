@@ -1,8 +1,11 @@
 package com.barbaburguer.whatsappcurso.Activity;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.util.Log;
@@ -104,5 +107,33 @@ public class LoginActivity extends AppCompatActivity {
             e.printStackTrace();
             return false;
         }
+    }
+    //metodo super para caso o usuario não der permissão para envio do token (SMS), fechar  o aplicativo
+
+    public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grandResults){
+
+        super.onRequestPermissionsResult(requestCode,permissions,grandResults);
+
+        for (int resultado : grandResults){
+            if(resultado == PackageManager.PERMISSION_DENIED){
+                AlertValidacaoPermicao();
+
+            }
+        }
+
+    }
+    //caso negado, irá fazer um AlertDialog avisando que não se pode funcionar sem as permissões
+    private void AlertValidacaoPermicao(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Permissões negadas");
+        builder.setMessage("Para utilizar esse app é necessário utilizar as permissões");
+        builder.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }
