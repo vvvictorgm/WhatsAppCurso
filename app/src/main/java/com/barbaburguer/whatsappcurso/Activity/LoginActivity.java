@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.telephony.SmsManager;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.barbaburguer.whatsappcurso.Helper.Permissao;
 import com.barbaburguer.whatsappcurso.Helper.Preferencias;
@@ -83,7 +85,16 @@ public class LoginActivity extends AppCompatActivity {
                 preferencias.salvarUsuarioPreferencias(nomeUsuario,telefoneSemFormatacao,token);
 
                 //Enviar SMS
-                enviaSMS("+" + telefoneSemFormatacao, mensagemEnvio);
+                boolean enviadoSMS = enviaSMS("+" + telefoneSemFormatacao, mensagemEnvio);
+                if(enviadoSMS){
+                    Intent intent = new Intent(LoginActivity.this, ValidadorActivity.class);
+                    startActivity(intent);
+                    finish();
+
+
+                }else{
+                    Toast.makeText(LoginActivity.this,"problema ao enviar SMS", Toast.LENGTH_LONG).show();
+                }
 
                 /*
                 //recuperar dados
@@ -95,13 +106,10 @@ public class LoginActivity extends AppCompatActivity {
     }
     //Envio de SMS
     private boolean enviaSMS(String telefone, String mensagem){
-
         try{
-
             SmsManager smsManager = SmsManager.getDefault();
             smsManager.sendTextMessage(telefone, null, mensagem, null, null);
             return true;
-
 
         }catch (Exception e){
             e.printStackTrace();
